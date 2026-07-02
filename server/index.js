@@ -8,11 +8,14 @@ app.use(cors());
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  connectionTimeout: 15000,
 });
 
 function buildEmailHtml(fields) {
