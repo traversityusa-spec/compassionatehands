@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Compassionate Hands Ltd</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="nav-shell">
+<nav>
+  <a href="index.html" class="logo">
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="#4A9B8E" stroke-width="2"/><path d="M11 22c3-7 7-10 9-10s4 2 4 5-3 5-6 5-5 2-5 5" stroke="#E8954A" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>
+    Compassionate Hands
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="contact.html" class="active">Contact</a>
+  </div>
+  <div class="nav-cta">
+    <a href="contact.html" class="btn btn-ghost btn-sm">Get Started</a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16304D" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+</div>
+
+<section class="page-hero" style="padding-bottom:20px;">
+  <div class="mesh"><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="wrap" style="position:relative;z-index:1;">
+    <h1 class="reveal">We're here to support you</h1>
+    <p class="lead reveal">Tell us a little about your needs and we'll follow up to schedule a consultation.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:20px;">
+  <div class="wrap">
+    <div class="grid-2" style="grid-template-columns:1.1fr .9fr;gap:50px;">
+
+      <form id="contactForm" class="glass-card reveal" style="padding:38px;">
+        <div class="grid-2" style="gap:16px;margin-bottom:6px;">
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:7px;">Full name</label>
+            <input type="text" placeholder="Jane Doe" required style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;">
+          </div>
+          <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:7px;">Phone</label>
+            <input type="tel" placeholder="(720) 555-0123" style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;">
+          </div>
+        </div>
+        <div style="margin:16px 0;">
+          <label style="display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:7px;">Email</label>
+          <input type="email" placeholder="you@example.com" required style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;">
+        </div>
+        <div style="margin:16px 0;">
+          <label style="display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:7px;">Service interested in</label>
+          <select style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;">
+            <option>Day Program &amp; Habilitation</option>
+            <option>Supported Community Connections</option>
+            <option>Social Engagement</option>
+            <option>Activities</option>
+            <option>Mentorship</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+        <div style="margin:16px 0 24px;">
+          <label style="display:block;font-size:13px;font-weight:600;color:var(--blue);margin-bottom:7px;">Message</label>
+          <textarea rows="4" placeholder="Tell us a bit about what you're looking for..." style="width:100%;padding:13px 16px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;font-family:'Inter';"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Message</button>
+        <p id="formSuccess" style="display:none;color:var(--teal);font-size:14px;margin-top:12px;font-weight:600;">Thanks — we'll be in touch shortly.</p>
+      </form>
+
+      <div class="reveal" style="display:flex;flex-direction:column;gap:18px;">
+        <div class="feat-card" style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="feat-icon" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><h4 style="font-size:15px;margin-bottom:4px;">Address</h4><p style="font-size:14.5px;color:var(--ink-soft);">12500 First St, Thornton, CO 80241</p></div>
+        </div>
+        <div class="feat-card" style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="feat-icon" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><h4 style="font-size:15px;margin-bottom:4px;">Phone</h4><p style="font-size:14.5px;color:var(--ink-soft);">+1 (720) 659-9501<br>+1 (720) 659-9497</p></div>
+        </div>
+        <div class="feat-card" style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="feat-icon" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 6 12 13 2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></div>
+          <div><h4 style="font-size:15px;margin-bottom:4px;">Email</h4><p style="font-size:14.5px;color:var(--ink-soft);">compassionatehandsltd@gmail.com</p></div>
+        </div>
+        <div class="feat-card" style="display:flex;gap:16px;align-items:flex-start;">
+          <div class="feat-icon" style="margin-bottom:0;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><h4 style="font-size:15px;margin-bottom:4px;">Office Hours</h4><p style="font-size:14.5px;color:var(--ink-soft);">Mon–Fri, 8:00 AM – 5:00 PM</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <h2 class="reveal" style="font-size:clamp(24px,3vw,32px);margin-bottom:30px;">A few questions families often ask</h2>
+    <div class="faq-list" style="max-width:760px;">
+      <div class="faq-item" style="border-bottom:1px solid var(--line);">
+        <button class="faq-q" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:'Plus Jakarta Sans';font-size:17px;font-weight:700;color:var(--blue);">Who does Compassionate Hands support?<span style="color:var(--gold);font-size:22px;flex-shrink:0;margin-left:20px;">+</span></button>
+        <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .3s ease;"><p style="padding-bottom:20px;color:var(--ink-soft);font-size:15px;">We support individuals with developmental disabilities who need assistance with personal growth, independence, and community participation.</p></div>
+      </div>
+      <div class="faq-item" style="border-bottom:1px solid var(--line);">
+        <button class="faq-q" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:'Plus Jakarta Sans';font-size:17px;font-weight:700;color:var(--blue);">What services do you provide?<span style="color:var(--gold);font-size:22px;flex-shrink:0;margin-left:20px;">+</span></button>
+        <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .3s ease;"><p style="padding-bottom:20px;color:var(--ink-soft);font-size:15px;">We provide habilitation, community support, social engagement, activities, and mentorship services.</p></div>
+      </div>
+      <div class="faq-item" style="border-bottom:1px solid var(--line);">
+        <button class="faq-q" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:22px 0;background:none;border:none;cursor:pointer;text-align:left;font-family:'Plus Jakarta Sans';font-size:17px;font-weight:700;color:var(--blue);">How can I get started?<span style="color:var(--gold);font-size:22px;flex-shrink:0;margin-left:20px;">+</span></button>
+        <div class="faq-a" style="max-height:0;overflow:hidden;transition:max-height .3s ease;"><p style="padding-bottom:20px;color:var(--ink-soft);font-size:15px;">Contact our team to discuss your needs and learn how we can provide support.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo"><svg width="28" height="28" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="19" stroke="#4A9B8E" stroke-width="2"/><path d="M11 22c3-7 7-10 9-10s4 2 4 5-3 5-6 5-5 2-5 5" stroke="#E8954A" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg>Compassionate Hands</div>
+        <p style="font-size:14px;max-width:280px;">Personalized support for individuals with developmental disabilities — built around growth, connection, and independence.</p>
+      </div>
+      <div><h5>Quick Links</h5><ul><li><a href="about.html">About</a></li><li><a href="services.html">Services</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div><h5>Contact</h5><ul><li>12500 First St, Thornton, CO 80241</li><li>+1 (720) 659-9501</li><li>compassionatehandsltd@gmail.com</li></ul></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 Compassionate Hands Ltd. All rights reserved.</span><span>Designed with care.</span></div>
+  </div>
+</footer>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
