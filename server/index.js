@@ -15,59 +15,33 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-app.post("/api/contact", async (req, res) => {
-  try {
-    const { name, phone, email, service, message } = req.body;
+function buildEmailHtml(fields) {
+  const rows = Object.entries(fields)
+    .map(([label, val]) => `<tr><td style="padding:8px;font-weight:bold">${label}:</td><td style="padding:8px">${val || "Not specified"}</td></tr>`)
+    .join("");
+  return `<h2>New Contact Form Submission</h2><table style="border-collapse:collapse;width:100%">${rows}</table>`;
+}
 
-    await transporter.sendMail({
-      from: `"${name}" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
-      replyTo: email,
-      subject: `New Contact Form Submission from ${name}`,
-      html: `
-        <h2>New Contact Form Submission</h2>
-        <table style="border-collapse:collapse;width:100%">
-          <tr><td style="padding:8px;font-weight:bold">Name:</td><td style="padding:8px">${name}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Phone:</td><td style="padding:8px">${phone}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Email:</td><td style="padding:8px">${email}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Service:</td><td style="padding:8px">${service || "Not specified"}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Message:</td><td style="padding:8px">${message}</td></tr>
-        </table>
-      `,
-    });
+function sendEmail(subject, fields) {
+  transporter.sendMail({
+    from: `"${fields.name}" <${process.env.SMTP_USER}>`,
+    to: process.env.SMTP_USER,
+    replyTo: fields.email,
+    subject,
+    html: buildEmailHtml(fields),
+  }).catch(err => console.error("Email send failed:", err));
+}
 
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to send email" });
-  }
+app.post("/api/contact", (req, res) => {
+  const { name, phone, email, service, message } = req.body;
+  res.json({ success: true });
+  sendEmail(`New Contact Form Submission from ${name}`, { name, phone, email, Service: service, message });
 });
 
-app.post("/api/contact-quick", async (req, res) => {
-  try {
-    const { name, email, phone, message } = req.body;
-
-    await transporter.sendMail({
-      from: `"${name}" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
-      replyTo: email,
-      subject: `Quick Contact from ${name}`,
-      html: `
-        <h2>Quick Contact Form Submission</h2>
-        <table style="border-collapse:collapse;width:100%">
-          <tr><td style="padding:8px;font-weight:bold">Name:</td><td style="padding:8px">${name}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Email:</td><td style="padding:8px">${email}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Phone:</td><td style="padding:8px">${phone}</td></tr>
-          <tr><td style="padding:8px;font-weight:bold">Message:</td><td style="padding:8px">${message}</td></tr>
-        </table>
-      `,
-    });
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to send email" });
-  }
+app.post("/api/contact-quick", (req, res) => {
+  const { name, email, phone, message } = req.body;
+  res.json({ success: true });
+  sendEmail(`Quick Contact from ${name}`, { name, email, phone, message });
 });
 
 const port = process.env.PORT || 3001;
