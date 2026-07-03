@@ -88,12 +88,13 @@ export default function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formState),
       });
-      if (!res.ok) throw new Error("Failed to send");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to send");
       setSubmitted(true);
       setFormState({ name: "", phone: "", email: "", service: "", message: "" });
       setTimeout(() => setSubmitted(false), 4000);
-    } catch {
-      alert("Something went wrong. Please try again later.");
+    } catch (err) {
+      alert(err.message);
     } finally {
       setSending(false);
     }

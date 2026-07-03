@@ -1,15 +1,13 @@
 <?php
-function loadEnv() {
-    $envFile = __DIR__ . "/../.env";
-    if (file_exists($envFile)) {
-        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-            if (str_starts_with(trim($line), "#")) continue;
-            [$key, $val] = explode("=", $line, 2);
-            putenv(trim($key) . "=" . trim($val));
-        }
+if (file_exists(__DIR__ . "/../.env")) {
+    foreach (file(__DIR__ . "/../.env", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === "" || $line[0] === "#") continue;
+        $eq = strpos($line, "=");
+        if ($eq === false) continue;
+        putenv(trim(substr($line, 0, $eq)) . "=" . trim(substr($line, $eq + 1)));
     }
 }
-loadEnv();
 
 $smtpUser = getenv("SMTP_USER");
 $smtpPass = getenv("SMTP_PASS");
@@ -86,24 +84,48 @@ require_once __DIR__ . "/phpmailer/Exception.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-try {
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host       = "smtp.gmail.com";
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $smtpUser;
-    $mail->Password   = $smtpPass;
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = 465;
-    $mail->setFrom($smtpUser, $name);
-    $mail->addReplyTo($email, $name);
-    $mail->addAddress($smtpUser);
-    $mail->Subject = $subject;
-    $mail->isHTML(true);
-    $mail->Body = $html;
-    $mail->send();
+$configs = [
+    ["host" => "smtp.gmail.com", "port" => 587, "secure" => PHPMailer::ENCRYPTION_STARTTLS],
+    ["host" => "smtp.gmail.com", "port" => 465, "secure" => PHPMailer::ENCRYPTION_SMTPS],
+];
+
+$lastError = "";
+$sent = false;
+
+foreach ($configs as $cfg) {
+    try {
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = $cfg["host"];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $smtpUser;
+        $mail->Password   = $smtpPass;
+        $mail->SMTPSecure = $cfg["secure"];
+        $mail->Port       = $cfg["port"];
+        $mail->setFrom($smtpUser, $name);
+        $mail->addReplyTo($email, $name);
+        $mail->addAddress($smtpUser);
+        $mail->Subject = $subject;
+        $mail->isHTML(true);
+        $mail->Body = $html;
+        $mail->SMTPOptions = [
+            "ssl" => [
+                "verify_peer"       => false,
+                "verify_peer_name"  => false,
+                "allow_self_signed" => true,
+            ],
+        ];
+        $mail->send();
+        $sent = true;
+        break;
+    } catch (Exception $e) {
+        $lastError = $mail->ErrorInfo;
+    }
+}
+
+if ($sent) {
     echo json_encode(["success" => true]);
-} catch (Exception $e) {
+} else {
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => $mail->ErrorInfo]);
+    echo json_encode(["success" => false, "message" => $lastError]);
 }
