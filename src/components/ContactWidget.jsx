@@ -11,7 +11,7 @@ export default function ContactWidget() {
     e.preventDefault();
     setSending(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/api/contact-quick`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ""}/server/mail.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formState),
