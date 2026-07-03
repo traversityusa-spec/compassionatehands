@@ -1,4 +1,25 @@
 <?php
+function loadEnv() {
+    $envFile = __DIR__ . "/../.env";
+    if (file_exists($envFile)) {
+        foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+            if (str_starts_with(trim($line), "#")) continue;
+            [$key, $val] = explode("=", $line, 2);
+            putenv(trim($key) . "=" . trim($val));
+        }
+    }
+}
+loadEnv();
+
+$smtpUser = getenv("SMTP_USER");
+$smtpPass = getenv("SMTP_PASS");
+
+if (!$smtpUser || !$smtpPass) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Mail server not configured"]);
+    exit;
+}
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -36,34 +57,53 @@ if (!$name || !$email || !$message) {
 $service = trim($input["service"] ?? "");
 $isQuick = empty($service);
 
-$to = "compassionatehandsltd@gmail.com";
 $subject = $isQuick
     ? "Quick Contact from $name"
     : "New Contact Form Submission from $name";
 
 $html = "<h2>" . ($isQuick ? "Quick Contact" : "New Contact Form Submission") . "</h2>";
 $html .= "<table style='border-collapse:collapse;width:100%;font-family:Arial,sans-serif;'>";
-$html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>Name:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>" . htmlspecialchars($name) . "</td></tr>";
-$html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>Email:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>" . htmlspecialchars($email) . "</td></tr>";
-$html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>Phone:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>" . htmlspecialchars($phone ?: "Not specified") . "</td></tr>";
-
+$fields = [
+    "Name"    => $name,
+    "Email"   => $email,
+    "Phone"   => $phone ?: "Not specified",
+];
 if (!$isQuick) {
-    $html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>Service:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>" . htmlspecialchars($service) . "</td></tr>";
+    $fields["Service"] = $service;
 }
+$fields["Message"] = $message;
 
-$html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>Message:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>" . nl2br(htmlspecialchars($message)) . "</td></tr>";
+foreach ($fields as $label => $val) {
+    $val = htmlspecialchars($val);
+    $html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>$label:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>$val</td></tr>";
+}
 $html .= "</table>";
 
-$headers = "From: $name <$to>\r\n";
-$headers .= "Reply-To: $email\r\n";
-$headers .= "MIME-Version: 1.0\r\n";
-$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+require_once __DIR__ . "/phpmailer/PHPMailer.php";
+require_once __DIR__ . "/phpmailer/SMTP.php";
+require_once __DIR__ . "/phpmailer/Exception.php";
 
-$sent = mail($to, $subject, $html, $headers);
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-if ($sent) {
+try {
+    $mail = new PHPMailer(true);
+    $mail->isSMTP();
+    $mail->Host       = "smtp.gmail.com";
+    $mail->SMTPAuth   = true;
+    $mail->Username   = $smtpUser;
+    $mail->Password   = $smtpPass;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    $mail->Port       = 465;
+    $mail->setFrom($smtpUser, $name);
+    $mail->addReplyTo($email, $name);
+    $mail->addAddress($smtpUser);
+    $mail->Subject = $subject;
+    $mail->isHTML(true);
+    $mail->Body = $html;
+    $mail->send();
     echo json_encode(["success" => true]);
-} else {
+} catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Failed to send email"]);
+    echo json_encode(["success" => false, "message" => $mail->ErrorInfo]);
 }
