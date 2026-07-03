@@ -4,7 +4,17 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://compassionatehandsltd.com",
+    "https://www.compassionatehandsltd.com"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 app.use(express.json());
 
 const transporter = nodemailer.createTransport({
@@ -48,6 +58,6 @@ app.post("/api/contact-quick", (req, res) => {
 });
 
 const port = process.env.PORT || 3001;
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on port ${port}`);
 });
