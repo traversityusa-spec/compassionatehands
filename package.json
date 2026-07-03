@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp dist/index.html dist/404.html && mkdir -p dist/server/phpmailer && cp server/mail.php dist/server/mail.php && cp server/phpmailer/*.php dist/server/phpmailer/ && test -f .env && cp .env dist/.env || true",
+    "build": "vite build && cp dist/index.html dist/404.html && mkdir -p dist/server && cp server/mail.php dist/server/mail.php && test -f .env && cp .env dist/.env || true",
     "preview": "vite preview"
   },
   "dependencies": {

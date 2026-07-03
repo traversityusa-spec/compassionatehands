@@ -1,23 +1,4 @@
 <?php
-if (file_exists(__DIR__ . "/../.env")) {
-    foreach (file(__DIR__ . "/../.env", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
-        $line = trim($line);
-        if ($line === "" || $line[0] === "#") continue;
-        $eq = strpos($line, "=");
-        if ($eq === false) continue;
-        putenv(trim(substr($line, 0, $eq)) . "=" . trim(substr($line, $eq + 1)));
-    }
-}
-
-$smtpUser = getenv("SMTP_USER");
-$smtpPass = getenv("SMTP_PASS");
-
-if (!$smtpUser || !$smtpPass) {
-    http_response_code(500);
-    echo json_encode(["success" => false, "message" => "Mail server not configured"]);
-    exit;
-}
-
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
@@ -55,6 +36,8 @@ if (!$name || !$email || !$message) {
 $service = trim($input["service"] ?? "");
 $isQuick = empty($service);
 
+$to = "compassionatehandsltd@gmail.com";
+$from = "noreply@compassionatehandsltd.com";
 $subject = $isQuick
     ? "Quick Contact from $name"
     : "New Contact Form Submission from $name";
@@ -66,66 +49,26 @@ $fields = [
     "Email"   => $email,
     "Phone"   => $phone ?: "Not specified",
 ];
-if (!$isQuick) {
-    $fields["Service"] = $service;
-}
+if (!$isQuick) $fields["Service"] = $service;
 $fields["Message"] = $message;
 
 foreach ($fields as $label => $val) {
     $val = htmlspecialchars($val);
-    $html .= "<tr><td style='padding:8px;font-weight:bold;border-bottom:1px solid #ddd;'>$label:</td><td style='padding:8px;border-bottom:1px solid #ddd;'>$val</td></tr>";
+    $html .= "<tr style='border-bottom:1px solid #ddd;'><td style='padding:8px;font-weight:bold;'>$label:</td><td style='padding:8px;'>$val</td></tr>";
 }
 $html .= "</table>";
 
-require_once __DIR__ . "/phpmailer/PHPMailer.php";
-require_once __DIR__ . "/phpmailer/SMTP.php";
-require_once __DIR__ . "/phpmailer/Exception.php";
+$headers = "From: $name <$from>\r\n";
+$headers .= "Reply-To: $email\r\n";
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-$configs = [
-    ["host" => "smtp.gmail.com", "port" => 587, "secure" => PHPMailer::ENCRYPTION_STARTTLS],
-    ["host" => "smtp.gmail.com", "port" => 465, "secure" => PHPMailer::ENCRYPTION_SMTPS],
-];
-
-$lastError = "";
-$sent = false;
-
-foreach ($configs as $cfg) {
-    try {
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host       = $cfg["host"];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $smtpUser;
-        $mail->Password   = $smtpPass;
-        $mail->SMTPSecure = $cfg["secure"];
-        $mail->Port       = $cfg["port"];
-        $mail->setFrom($smtpUser, $name);
-        $mail->addReplyTo($email, $name);
-        $mail->addAddress($smtpUser);
-        $mail->Subject = $subject;
-        $mail->isHTML(true);
-        $mail->Body = $html;
-        $mail->SMTPOptions = [
-            "ssl" => [
-                "verify_peer"       => false,
-                "verify_peer_name"  => false,
-                "allow_self_signed" => true,
-            ],
-        ];
-        $mail->send();
-        $sent = true;
-        break;
-    } catch (Exception $e) {
-        $lastError = $mail->ErrorInfo;
-    }
-}
+$sent = mail($to, $subject, $html, $headers, "-f $from");
 
 if ($sent) {
     echo json_encode(["success" => true]);
 } else {
+    $err = error_get_last();
     http_response_code(500);
-    echo json_encode(["success" => false, "message" => $lastError]);
+    echo json_encode(["success" => false, "message" => $err["message"] ?? "Failed to send email"]);
 }
